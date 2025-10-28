@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/dnd-character-sheets/static/css/main.ebc35a74.css",
-    "main.js": "/dnd-character-sheets/static/js/main.ad97ba05.js",
+    "main.css": "/dnd-character-sheets/static/css/main.e1114940.css",
+    "main.js": "/dnd-character-sheets/static/js/main.a9e1053a.js",
     "static/js/453.a6b3f3ba.chunk.js": "/dnd-character-sheets/static/js/453.a6b3f3ba.chunk.js",
     "index.html": "/dnd-character-sheets/index.html",
-    "main.ebc35a74.css.map": "/dnd-character-sheets/static/css/main.ebc35a74.css.map",
-    "main.ad97ba05.js.map": "/dnd-character-sheets/static/js/main.ad97ba05.js.map",
+    "main.e1114940.css.map": "/dnd-character-sheets/static/css/main.e1114940.css.map",
+    "main.a9e1053a.js.map": "/dnd-character-sheets/static/js/main.a9e1053a.js.map",
     "453.a6b3f3ba.chunk.js.map": "/dnd-character-sheets/static/js/453.a6b3f3ba.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ebc35a74.css",
-    "static/js/main.ad97ba05.js"
+    "static/css/main.e1114940.css",
+    "static/js/main.a9e1053a.js"
   ]
 }
