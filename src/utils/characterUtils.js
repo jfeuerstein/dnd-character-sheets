@@ -1,4 +1,4 @@
-import { DEFAULTS, ABILITIES } from '../constants';
+import { DEFAULTS, ABILITIES, SKILLS, PROFICIENCY_LEVELS, SKILL_ABILITIES } from '../constants';
 
 /**
  * Calculate ability score modifier
@@ -20,6 +20,48 @@ export const getModifierValue = (score) => {
 };
 
 /**
+ * Calculate skill modifier
+ * @param {Object} character - Character object
+ * @param {string} skill - Skill name
+ * @returns {number} Skill modifier
+ */
+export const calculateSkillModifier = (character, skill) => {
+  const ability = SKILL_ABILITIES[skill];
+  const abilityMod = getModifierValue(character.stats[ability]);
+  const proficiency = character.skills[skill];
+  
+  let bonus = abilityMod;
+  
+  if (proficiency === PROFICIENCY_LEVELS.PROFICIENT) {
+    bonus += character.proficiencyBonus;
+  } else if (proficiency === PROFICIENCY_LEVELS.EXPERTISE) {
+    bonus += character.proficiencyBonus * 2;
+  }
+  
+  return bonus;
+};
+
+/**
+ * Get effective ability scores (with feature modifiers)
+ * @param {Object} character - Character object
+ * @returns {Object} Effective ability scores
+ */
+export const getEffectiveStats = (character) => {
+  const effectiveStats = { ...character.stats };
+  
+  // Apply modifiers from features
+  character.features?.forEach(feature => {
+    if (feature.abilityModifiers) {
+      Object.entries(feature.abilityModifiers).forEach(([ability, modifier]) => {
+        effectiveStats[ability] = (effectiveStats[ability] || 0) + modifier;
+      });
+    }
+  });
+  
+  return effectiveStats;
+};
+
+/**
  * Create a new blank character
  * @param {boolean} isHxH - Whether to create a Hunter x Hunter character
  * @returns {Object} New character object
@@ -38,7 +80,10 @@ export const createBlankCharacter = (isHxH = false) => ({
   hp: { current: DEFAULTS.STARTING_HP, max: DEFAULTS.STARTING_HP, temp: 0 },
   ac: DEFAULTS.STARTING_AC,
   proficiencyBonus: DEFAULTS.PROFICIENCY_BONUS,
-  skills: {},
+  skills: Object.values(SKILLS).reduce((acc, skill) => {
+    acc[skill] = PROFICIENCY_LEVELS.NONE;
+    return acc;
+  }, {}),
   savingThrows: {},
   actions: [],
   inventory: [],

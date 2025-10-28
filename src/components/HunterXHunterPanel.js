@@ -1,10 +1,12 @@
 import React from 'react';
 import { 
   NEN_TYPE_LABELS, 
-  NEN_TECHNIQUE_LABELS,
-  NEN_TECHNIQUE_DESCRIPTIONS,
-  HATSU_LEVELS
+  NEN_FEATURE_LABELS,
+  NEN_FEATURE_DESCRIPTIONS,
+  HATSU_LEVELS,
+  NEN_FEATURES_BY_LEVEL
 } from '../constants';
+import { getNenFeaturesAtLevel } from '../utils/nenUtils';
 
 const HunterXHunterPanel = ({ character, onUpdate, isEditing = false }) => {
   if (!character.isHxH) return null;
@@ -51,25 +53,14 @@ const HunterXHunterPanel = ({ character, onUpdate, isEditing = false }) => {
     });
   };
 
-  const updateNenTechnique = (technique, field, value) => {
-    onUpdate({
-      ...character,
-      nenTechniques: {
-        ...character.nenTechniques,
-        [technique]: {
-          ...character.nenTechniques[technique],
-          [field]: value
-        }
-      }
-    });
-  };
-
   const updateNenType = (value) => {
     onUpdate({
       ...character,
       nenType: value
     });
   };
+
+  const availableNenFeatures = getNenFeaturesAtLevel(character.level);
 
   if (isEditing) {
     return (
@@ -99,7 +90,6 @@ const HunterXHunterPanel = ({ character, onUpdate, isEditing = false }) => {
           <div className="space-y-2">
             {HATSU_LEVELS.map(level => {
               const slot = character.hatsuSlots[level];
-              if (!slot || slot.max === 0) return null;
               
               return (
                 <div key={level} className="grid grid-cols-3 gap-2 items-center">
@@ -131,35 +121,28 @@ const HunterXHunterPanel = ({ character, onUpdate, isEditing = false }) => {
 
         <div>
           <div className="mb-2 opacity-60 text-xs">
-            ╔═ nen <span className="opacity-40">×</span> techniques
+            ╔═ nen <span className="opacity-40">×</span> features (by level)
           </div>
-          <div className="space-y-2">
-            {Object.entries(character.nenTechniques || {}).map(([key, technique]) => (
-              <div key={key} className="border border-white p-3">
-                <label className="flex items-center gap-2 mb-2">
-                  <input
-                    type="checkbox"
-                    checked={technique.learned}
-                    onChange={(e) => updateNenTechnique(key, 'learned', e.target.checked)}
-                    className="w-4 h-4"
-                  />
-                  <span className="font-bold">{NEN_TECHNIQUE_LABELS[key]}</span>
-                  <span className="opacity-60 text-xs ml-auto">
-                    {NEN_TECHNIQUE_DESCRIPTIONS[key]}
-                  </span>
-                </label>
-                {technique.learned && (
-                  <textarea
-                    value={technique.notes}
-                    onChange={(e) => updateNenTechnique(key, 'notes', e.target.value)}
-                    placeholder="notes..."
-                    rows={2}
-                    className="w-full bg-neutral-900 border border-white px-3 py-2 text-white font-mono text-xs"
-                  />
-                )}
+          <div className="text-xs opacity-60 mb-3">
+            nen features unlock automatically based on character level
+          </div>
+          {Object.entries(NEN_FEATURES_BY_LEVEL).map(([reqLevel, features]) => {
+            const hasLevel = character.level >= parseInt(reqLevel);
+            return (
+              <div key={reqLevel} className={`border border-white p-2 mb-2 ${!hasLevel ? 'opacity-40' : ''}`}>
+                <div className="text-xs mb-1">
+                  <span className="font-bold">level {reqLevel}:</span>
+                  {!hasLevel && <span className="ml-2 opacity-60">(locked)</span>}
+                </div>
+                {features.map(feature => (
+                  <div key={feature} className="pl-2 text-xs">
+                    <span className="font-bold">{NEN_FEATURE_LABELS[feature]}</span>
+                    <span className="opacity-60 ml-2">{NEN_FEATURE_DESCRIPTIONS[feature]}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
     );
@@ -235,30 +218,25 @@ const HunterXHunterPanel = ({ character, onUpdate, isEditing = false }) => {
         </div>
       )}
 
-      <div>
-        <div className="mb-2 opacity-60 text-xs">
-          ╔═ nen <span className="opacity-40">×</span> techniques
-        </div>
-        <div className="space-y-2">
-          {Object.entries(character.nenTechniques || {}).map(([key, technique]) => (
-            technique.learned && (
-              <div key={key} className="border border-white p-3">
+      {availableNenFeatures.length > 0 && (
+        <div>
+          <div className="mb-2 opacity-60 text-xs">
+            ╔═ nen <span className="opacity-40">×</span> features
+          </div>
+          <div className="space-y-2">
+            {availableNenFeatures.map(feature => (
+              <div key={feature} className="border border-white p-3">
                 <div className="flex justify-between items-start mb-1">
-                  <span className="font-bold">► {NEN_TECHNIQUE_LABELS[key]}</span>
-                  <span className="opacity-60 text-xs">
-                    {NEN_TECHNIQUE_DESCRIPTIONS[key]}
-                  </span>
+                  <span className="font-bold">► {NEN_FEATURE_LABELS[feature]}</span>
                 </div>
-                {technique.notes && (
-                  <div className="opacity-60 text-xs pl-4 mt-2">
-                    {technique.notes}
-                  </div>
-                )}
+                <div className="opacity-60 text-xs pl-4">
+                  {NEN_FEATURE_DESCRIPTIONS[feature]}
+                </div>
               </div>
-            )
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

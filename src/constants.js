@@ -32,6 +32,76 @@ export const ABILITY_NAMES = {
   cha: 'Charisma'
 };
 
+// Skills
+export const SKILLS = {
+  ACROBATICS: 'acrobatics',
+  ANIMAL_HANDLING: 'animal_handling',
+  ARCANA: 'arcana',
+  ATHLETICS: 'athletics',
+  DECEPTION: 'deception',
+  HISTORY: 'history',
+  INSIGHT: 'insight',
+  INTIMIDATION: 'intimidation',
+  INVESTIGATION: 'investigation',
+  MEDICINE: 'medicine',
+  NATURE: 'nature',
+  PERCEPTION: 'perception',
+  PERFORMANCE: 'performance',
+  PERSUASION: 'persuasion',
+  RELIGION: 'religion',
+  SLEIGHT_OF_HAND: 'sleight_of_hand',
+  STEALTH: 'stealth',
+  SURVIVAL: 'survival'
+};
+
+export const SKILL_NAMES = {
+  acrobatics: 'Acrobatics',
+  animal_handling: 'Animal Handling',
+  arcana: 'Arcana',
+  athletics: 'Athletics',
+  deception: 'Deception',
+  history: 'History',
+  insight: 'Insight',
+  intimidation: 'Intimidation',
+  investigation: 'Investigation',
+  medicine: 'Medicine',
+  nature: 'Nature',
+  perception: 'Perception',
+  performance: 'Performance',
+  persuasion: 'Persuasion',
+  religion: 'Religion',
+  sleight_of_hand: 'Sleight of Hand',
+  stealth: 'Stealth',
+  survival: 'Survival'
+};
+
+export const SKILL_ABILITIES = {
+  acrobatics: 'dex',
+  animal_handling: 'wis',
+  arcana: 'int',
+  athletics: 'str',
+  deception: 'cha',
+  history: 'int',
+  insight: 'wis',
+  intimidation: 'cha',
+  investigation: 'int',
+  medicine: 'wis',
+  nature: 'int',
+  perception: 'wis',
+  performance: 'cha',
+  persuasion: 'cha',
+  religion: 'int',
+  sleight_of_hand: 'dex',
+  stealth: 'dex',
+  survival: 'wis'
+};
+
+export const PROFICIENCY_LEVELS = {
+  NONE: 'none',
+  PROFICIENT: 'proficient',
+  EXPERTISE: 'expertise'
+};
+
 // Default values
 export const DEFAULTS = {
   ABILITY_SCORE: 10,
@@ -115,48 +185,48 @@ export const NEN_TYPE_LABELS = {
 // HxH Color Schemes (based on the anime's arc aesthetics)
 export const NEN_TYPE_COLORS = {
   [NEN_TYPES.ENHANCER]: {
-    primary: '#FF6B6B', // Red
-    secondary: '#4ECDC4', // Teal
+    primary: '#FF6B6B',
+    secondary: '#4ECDC4',
     bg: '#2C2C2C',
     bgLight: '#3A3A3A',
     text: '#FFFFFF',
     accent: '#FFE66D'
   },
   [NEN_TYPES.TRANSMUTER]: {
-    primary: '#A8DADC', // Light Blue
-    secondary: '#F1FAEE', // Off White
+    primary: '#A8DADC',
+    secondary: '#F1FAEE',
     bg: '#1D3557',
     bgLight: '#2D4567',
     text: '#F1FAEE',
     accent: '#E63946'
   },
   [NEN_TYPES.EMITTER]: {
-    primary: '#06FFA5', // Bright Green
-    secondary: '#FFFB46', // Yellow
+    primary: '#06FFA5',
+    secondary: '#FFFB46',
     bg: '#0D1B2A',
     bgLight: '#1B263B',
     text: '#E0E1DD',
     accent: '#06FFA5'
   },
   [NEN_TYPES.CONJURER]: {
-    primary: '#B298DC', // Purple
-    secondary: '#FFB5E8', // Pink
+    primary: '#B298DC',
+    secondary: '#FFB5E8',
     bg: '#2B2D42',
     bgLight: '#3B3D52',
     text: '#EDF2F4',
     accent: '#FF006E'
   },
   [NEN_TYPES.MANIPULATOR]: {
-    primary: '#FFBA08', // Gold
-    secondary: '#D00000', // Dark Red
+    primary: '#FFBA08',
+    secondary: '#D00000',
     bg: '#03071E',
     bgLight: '#1A1A2E',
     text: '#FAA307',
     accent: '#FFBA08'
   },
   [NEN_TYPES.SPECIALIST]: {
-    primary: '#7209B7', // Purple
-    secondary: '#F72585', // Pink
+    primary: '#7209B7',
+    secondary: '#F72585',
     bg: '#10002B',
     bgLight: '#240046',
     text: '#E0AAFF',
@@ -164,31 +234,39 @@ export const NEN_TYPE_COLORS = {
   }
 };
 
-export const NEN_TECHNIQUES = {
-  TEN: 'ten',
-  REN: 'ren',
-  GYO: 'gyo',
-  IN: 'in',
-  EN: 'en',
-  HATSU: 'hatsu'
+// Nen Features by Level (automatic progression from rulebook)
+export const NEN_FEATURES_BY_LEVEL = {
+  1: ['ten', 'ren', 'hatsu'],
+  2: ['lesser_gyo'],
+  3: ['total_zetsu'],
+  5: ['nen_initiation'],
+  7: ['greater_gyo'],
+  10: ['in'],
+  12: ['en']
 };
 
-export const NEN_TECHNIQUE_LABELS = {
-  [NEN_TECHNIQUES.TEN]: 'Ten',
-  [NEN_TECHNIQUES.REN]: 'Ren',
-  [NEN_TECHNIQUES.GYO]: 'Gyo',
-  [NEN_TECHNIQUES.IN]: 'In',
-  [NEN_TECHNIQUES.EN]: 'En',
-  [NEN_TECHNIQUES.HATSU]: 'Hatsu'
+export const NEN_FEATURE_LABELS = {
+  ten: 'Ten',
+  ren: 'Ren',
+  hatsu: 'Hatsu',
+  lesser_gyo: 'Lesser Gyo',
+  total_zetsu: 'Total Zetsu',
+  nen_initiation: 'Nen Initiation',
+  greater_gyo: 'Greater Gyo',
+  in: 'In',
+  en: 'En'
 };
 
-export const NEN_TECHNIQUE_DESCRIPTIONS = {
-  [NEN_TECHNIQUES.TEN]: 'Shroud - Keep aura around body',
-  [NEN_TECHNIQUES.REN]: 'Refine - Increase aura output',
-  [NEN_TECHNIQUES.GYO]: 'Focus - Concentrate aura to one point',
-  [NEN_TECHNIQUES.IN]: 'Conceal - Hide your aura',
-  [NEN_TECHNIQUES.EN]: 'Circle - Extend aura to sense area',
-  [NEN_TECHNIQUES.HATSU]: 'Release - Personal Nen ability'
+export const NEN_FEATURE_DESCRIPTIONS = {
+  ten: 'Shroud - Maintain nen aura for defense and resistance',
+  ren: 'Refine - Output extra aura for powerful attacks',
+  hatsu: 'Release - Use unique supernatural abilities',
+  lesser_gyo: 'Focus - See nen auras (bonus action, concentration, disadvantage on saves)',
+  total_zetsu: 'Suppress - Hide aura completely (action, advantage on stealth)',
+  nen_initiation: 'Force open aura nodes in others (action, touch)',
+  greater_gyo: 'Advanced Focus - Gyo becomes automatic in danger, no disadvantage',
+  in: 'Conceal - Hide your nen aura (action, concentration)',
+  en: 'Circle - Expand aura to sense surroundings (action, concentration)'
 };
 
 // Rest types
