@@ -1,0 +1,102 @@
+import { DEFAULTS, ABILITIES } from '../constants';
+
+/**
+ * Calculate ability score modifier
+ * @param {number} score - The ability score (3-20+)
+ * @returns {string} Formatted modifier string (e.g., "+3", "-1")
+ */
+export const calculateModifier = (score) => {
+  const mod = Math.floor((score - 10) / 2);
+  return mod >= 0 ? `+${mod}` : `${mod}`;
+};
+
+/**
+ * Get raw modifier value (number)
+ * @param {number} score - The ability score
+ * @returns {number} Raw modifier value
+ */
+export const getModifierValue = (score) => {
+  return Math.floor((score - 10) / 2);
+};
+
+/**
+ * Create a new blank character
+ * @returns {Object} New character object
+ */
+export const createBlankCharacter = () => ({
+  id: Date.now(),
+  name: 'new character',
+  level: DEFAULTS.STARTING_LEVEL,
+  race: '',
+  class: '',
+  background: '',
+  stats: Object.values(ABILITIES).reduce((acc, ability) => {
+    acc[ability] = DEFAULTS.ABILITY_SCORE;
+    return acc;
+  }, {}),
+  hp: { current: DEFAULTS.STARTING_HP, max: DEFAULTS.STARTING_HP, temp: 0 },
+  ac: DEFAULTS.STARTING_AC,
+  proficiencyBonus: DEFAULTS.PROFICIENCY_BONUS,
+  skills: {},
+  savingThrows: {},
+  actions: [],
+  inventory: [],
+  features: [],
+  notes: ''
+});
+
+/**
+ * Export character to JSON file
+ * @param {Object} character - Character object to export
+ */
+export const exportCharacterToFile = (character) => {
+  const dataStr = JSON.stringify(character, null, 2);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(dataBlob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${character.name.replace(/\s+/g, '_')}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+};
+
+/**
+ * Export all campaign data to JSON file
+ * @param {Array} characters - Array of character objects
+ */
+export const exportAllData = (characters) => {
+  const allData = {
+    characters,
+    exportDate: new Date().toISOString()
+  };
+  const dataStr = JSON.stringify(allData, null, 2);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(dataBlob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'campaign_data.json';
+  link.click();
+  URL.revokeObjectURL(url);
+};
+
+/**
+ * Import character from file
+ * @param {File} file - File object to import
+ * @param {Function} onSuccess - Callback on successful import
+ * @param {Function} onError - Callback on error
+ */
+export const importCharacterFromFile = (file, onSuccess, onError) => {
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      imported.id = Date.now(); // Assign new ID to avoid conflicts
+      onSuccess(imported);
+    } catch (error) {
+      onError(error);
+    }
+  };
+  reader.readAsText(file);
+};

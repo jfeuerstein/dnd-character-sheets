@@ -1,70 +1,128 @@
-# Getting Started with Create React App
+# D&D Character Sheet Manager
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A minimalist, terminal-inspired character sheet manager for D&D 5e and homebrew campaigns.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- ✨ Create, edit, and manage multiple characters
+- 🎲 Clickable dice rolls for ability checks and proficiency
+- 💾 Auto-save to localStorage
+- 📤 Import/Export characters as JSON
+- 🎨 ASCII art terminal aesthetic
+- ⚡ HP increment/decrement buttons
+- 🔧 Fully customizable for homebrew systems
 
-### `npm start`
+## Project Structure
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```
+src/
+├── components/          # React components
+│   ├── Header.js       # App header with navigation
+│   ├── CharacterList.js    # List view of all characters
+│   ├── CharacterView.js    # Read-only character sheet
+│   ├── CharacterEdit.js    # Edit character sheet
+│   └── index.js        # Component exports
+├── hooks/              # Custom React hooks
+│   └── useCharacters.js    # Character state management
+├── utils/              # Utility functions
+│   ├── characterUtils.js   # Character operations
+│   ├── diceUtils.js        # Dice rolling logic
+│   ├── storage.js          # localStorage management
+│   └── index.js        # Utility exports
+├── App.js              # Main application
+├── App.css             # Application styles
+├── index.js            # React entry point
+└── index.css           # Global styles
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Getting Started
 
-### `npm test`
+### Installation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm install
+```
 
-### `npm run build`
+### Development
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm start
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Runs the app in development mode at [http://localhost:3000](http://localhost:3000).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Build
 
-### `npm run eject`
+```bash
+npm run build
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Builds the app for production to the `build` folder.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Deploy to GitHub Pages
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+npm run deploy
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Usage
 
-## Learn More
+### Creating a Character
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. Click `[ + new ]` to create a new character
+2. Fill in character details (name, race, class, stats, etc.)
+3. Add features, spells, and notes as needed
+4. Click `save` to save the character
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Rolling Dice
 
-### Code Splitting
+- Click any **ability score** to roll a d20 + modifier
+- Click the **proficiency bonus** to roll d20 + proficiency
+- Roll results appear at the top for 3 seconds
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Managing HP
 
-### Analyzing the Bundle Size
+- Use **+** and **-** buttons to adjust HP during gameplay
+- HP automatically saves to localStorage
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Import/Export
 
-### Making a Progressive Web App
+- **Export**: Click `export` on any character to download as JSON
+- **Import**: Click `[ import ]` and select a JSON file
+- **Export All**: Click `[ export all ]` to backup all characters
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Customization
 
-### Advanced Configuration
+### Adding Custom Features
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Edit `src/utils/characterUtils.js` to modify the default character template:
 
-### Deployment
+```javascript
+export const createBlankCharacter = () => ({
+  // Customize default values here
+  stats: { str: 10, dex: 10, ... },
+  // Add custom fields
+  customField: 'value'
+});
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Styling
 
-### `npm run build` fails to minify
+- Colors: Edit `src/index.css` for neutral colors
+- Layout: Modify individual components in `src/components/`
+- Tailwind: Update `tailwind.config.js` for theme changes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Tech Stack
+
+- **React** - UI framework
+- **Tailwind CSS** - Styling
+- **localStorage** - Data persistence
+- **Create React App** - Build tooling
+
+## Contributing
+
+Feel free to fork and customize for your own campaigns!
+
+## License
+
+MIT
