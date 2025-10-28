@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { calculateModifier } from '../utils/characterUtils';
 import ActionsManager from './ActionsManager';
 import HunterXHunterPanel from './HunterXHunterPanel';
+import SkillsPanel from './SkillsPanel';
 import { getHxHStyles } from '../utils/themeUtils';
+import { ABILITIES } from '../constants';
 
 const CharacterEdit = ({ character, onSave, onCancel }) => {
   const [editChar, setEditChar] = useState({ ...character });
@@ -21,13 +23,28 @@ const CharacterEdit = ({ character, onSave, onCancel }) => {
   const addFeature = () => {
     setEditChar({
       ...editChar,
-      features: [...editChar.features, { name: '', description: '' }]
+      features: [...editChar.features, { name: '', description: '', abilityModifiers: {} }]
     });
   };
 
   const updateFeature = (idx, field, value) => {
     const updated = [...editChar.features];
     updated[idx][field] = value;
+    setEditChar({ ...editChar, features: updated });
+  };
+
+  const updateFeatureAbilityModifier = (idx, ability, value) => {
+    const updated = [...editChar.features];
+    const mods = { ...updated[idx].abilityModifiers };
+    const val = parseInt(value);
+    
+    if (val && val !== 0) {
+      mods[ability] = val;
+    } else {
+      delete mods[ability];
+    }
+    
+    updated[idx].abilityModifiers = mods;
     setEditChar({ ...editChar, features: updated });
   };
 
@@ -155,6 +172,14 @@ const CharacterEdit = ({ character, onSave, onCancel }) => {
         </div>
 
         <div>
+          <SkillsPanel
+            character={editChar}
+            onUpdate={setEditChar}
+            isEditing={true}
+          />
+        </div>
+
+        <div>
           <div className="flex justify-between items-center mb-2">
             <div className="opacity-60 text-xs">╔═ features & traits</div>
             <button
@@ -166,8 +191,8 @@ const CharacterEdit = ({ character, onSave, onCancel }) => {
           </div>
           <div className="space-y-2">
             {editChar.features.map((feature, idx) => (
-              <div key={idx} className="border border-white p-3">
-                <div className="flex gap-2 mb-2">
+              <div key={idx} className="border border-white p-3 space-y-2">
+                <div className="flex gap-2">
                   <input
                     type="text"
                     value={feature.name}
@@ -189,6 +214,26 @@ const CharacterEdit = ({ character, onSave, onCancel }) => {
                   rows={2}
                   className="w-full bg-neutral-900 border border-white px-3 py-2 text-white font-mono"
                 />
+                <div>
+                  <label className="block mb-1 opacity-60 text-xs">ability modifiers (optional)</label>
+                  <div className="grid grid-cols-6 gap-2">
+                    {Object.keys(ABILITIES).map(ability => (
+                      <div key={ability} className="text-center">
+                        <div className="text-xs opacity-60 mb-1">{ability}</div>
+                        <input
+                          type="number"
+                          value={feature.abilityModifiers?.[ABILITIES[ability]] || ''}
+                          onChange={(e) => updateFeatureAbilityModifier(idx, ABILITIES[ability], e.target.value)}
+                          placeholder="0"
+                          className="w-full bg-neutral-900 border border-white px-2 py-1 text-white font-mono text-xs text-center"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="text-xs opacity-60 mt-1">
+                    example: +2 for bonus, -1 for penalty
+                  </div>
+                </div>
               </div>
             ))}
           </div>

@@ -1,4 +1,4 @@
-import { ACTION_CATEGORIES, ACTION_TYPES } from '../constants';
+import { ACTION_CATEGORIES, ACTION_TYPES, SKILLS, PROFICIENCY_LEVELS } from '../constants';
 
 /**
  * Migrate old spell format to new actions format
@@ -51,6 +51,19 @@ export const migrateSpellsToActions = (character) => {
   // Keep old spells data for backwards compatibility
   if (!migrated.spells) {
     migrated.spells = { slots: {}, known: [], prepared: [] };
+  }
+
+  // Initialize skills for old characters
+  if (!migrated.skills || typeof migrated.skills !== 'object' || Object.keys(migrated.skills).length === 0) {
+    migrated.skills = Object.values(SKILLS).reduce((acc, skill) => {
+      acc[skill] = PROFICIENCY_LEVELS.NONE;
+      return acc;
+    }, {});
+  }
+
+  // Remove old nenTechniques if it exists (replaced by automatic progression)
+  if (migrated.isHxH && migrated.nenTechniques) {
+    delete migrated.nenTechniques;
   }
 
   return migrated;

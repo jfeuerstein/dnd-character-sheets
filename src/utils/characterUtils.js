@@ -102,14 +102,6 @@ export const createBlankCharacter = (isHxH = false) => ({
     7: { max: 0, current: 0 },
     8: { max: 0, current: 0 },
     9: { max: 0, current: 0 }
-  } : undefined,
-  nenTechniques: isHxH ? {
-    ten: { learned: false, notes: '' },
-    ren: { learned: false, notes: '' },
-    gyo: { learned: false, notes: '' },
-    in: { learned: false, notes: '' },
-    en: { learned: false, notes: '' },
-    hatsu: { learned: false, notes: '' }
   } : undefined
 });
 

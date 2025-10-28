@@ -24,7 +24,7 @@ const HunterXHunterPanel = ({ character, onUpdate, isEditing = false }) => {
     });
   };
 
-  const useHatsuSlot = (level) => {
+  const expendHatsuSlot = (level) => {
     const slot = character.hatsuSlots[level];
     if (slot.current > 0) {
       updateHatsuSlot(level, 'current', slot.current - 1);
@@ -177,7 +177,7 @@ const HunterXHunterPanel = ({ character, onUpdate, isEditing = false }) => {
                   <span className="text-xs opacity-60">level {level}</span>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => useHatsuSlot(level)}
+                      onClick={() => expendHatsuSlot(level)}
                       disabled={slot.current === 0}
                       className="px-2 py-1 border border-white hover:bg-white hover:text-neutral-800 transition-colors text-sm disabled:opacity-30"
                     >

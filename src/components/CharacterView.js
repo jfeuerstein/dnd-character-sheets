@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { rollD20 } from '../utils/diceUtils';
-import { getModifierValue, calculateModifier } from '../utils/characterUtils';
+import { getModifierValue, calculateModifier, getEffectiveStats } from '../utils/characterUtils';
 import { ROLL_DISPLAY_DURATION } from '../constants';
 import ActionsManager from './ActionsManager';
 import HunterXHunterPanel from './HunterXHunterPanel';
+import SkillsPanel from './SkillsPanel';
 import { getHxHStyles } from '../utils/themeUtils';
 
 const CharacterView = ({ 
@@ -112,8 +113,11 @@ const CharacterView = ({
         <div className="mb-6">
           <div className="mb-2 opacity-60">╔═ ability scores</div>
           <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-            {Object.entries(character.stats).map(([stat, value]) => {
-              const mod = getModifierValue(value);
+            {Object.entries(character.stats).map(([stat, baseValue]) => {
+              const effectiveStats = getEffectiveStats(character);
+              const effectiveValue = effectiveStats[stat];
+              const hasModifier = baseValue !== effectiveValue;
+              const mod = getModifierValue(effectiveValue);
               return (
                 <button
                   key={stat}
@@ -121,12 +125,29 @@ const CharacterView = ({
                   className="border border-white p-2 text-center hover:bg-white hover:text-neutral-800 transition-colors cursor-pointer"
                 >
                   <div className="text-xs opacity-60 mb-1">{stat}</div>
-                  <div className="text-xl">{value}</div>
-                  <div className="text-xs opacity-60">{calculateModifier(value)}</div>
+                  <div className="text-xl">
+                    {effectiveValue}
+                    {hasModifier && (
+                      <span className="text-xs ml-1 opacity-60">({baseValue})</span>
+                    )}
+                  </div>
+                  <div className="text-xs opacity-60">{calculateModifier(effectiveValue)}</div>
                 </button>
               );
             })}
           </div>
+        </div>
+
+        <div className="mb-6">
+          <SkillsPanel
+            character={character}
+            onUpdate={(updated) => {
+              const updatedChars = characters.map(c => c.id === updated.id ? updated : c);
+              setCharacters(updatedChars);
+              setCurrentCharacter(updated);
+            }}
+            isEditing={false}
+          />
         </div>
 
         {character.features.length > 0 && (
