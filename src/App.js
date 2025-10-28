@@ -16,10 +16,16 @@ function App() {
   const { characters, setCharacters, addCharacter, updateCharacter, deleteCharacter } = useCharacters();
   const [currentCharacter, setCurrentCharacter] = useState(null);
   const [view, setView] = useState('list'); // list, view, edit
+  const [showHxHModal, setShowHxHModal] = useState(false);
 
   const handleCreateNew = () => {
-    const newChar = createBlankCharacter();
+    setShowHxHModal(true);
+  };
+
+  const handleConfirmCharacterType = (isHxH) => {
+    const newChar = createBlankCharacter(isHxH);
     setCurrentCharacter(newChar);
+    setShowHxHModal(false);
     setView('edit');
   };
 
@@ -86,6 +92,36 @@ function App() {
           onExportAll={() => exportAllData(characters)}
           onImport={handleImport}
         />
+
+        {showHxHModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-neutral-800 border border-white p-6 max-w-md">
+              <div className="text-lg mb-4">select character type</div>
+              <div className="space-y-3 mb-6">
+                <button
+                  onClick={() => handleConfirmCharacterType(false)}
+                  className="w-full px-4 py-3 border border-white hover:bg-white hover:text-neutral-800 transition-colors text-left"
+                >
+                  <div className="font-bold">standard d&d 5e</div>
+                  <div className="text-xs opacity-60 mt-1">traditional character sheet</div>
+                </button>
+                <button
+                  onClick={() => handleConfirmCharacterType(true)}
+                  className="w-full px-4 py-3 border border-white hover:bg-white hover:text-neutral-800 transition-colors text-left"
+                >
+                  <div className="font-bold">hunter x hunter</div>
+                  <div className="text-xs opacity-60 mt-1">includes nen types, aura, and hatsu</div>
+                </button>
+              </div>
+              <button
+                onClick={() => setShowHxHModal(false)}
+                className="w-full px-4 py-2 border border-white hover:bg-white hover:text-neutral-800 transition-colors"
+              >
+                cancel
+              </button>
+            </div>
+          </div>
+        )}
 
         {view === 'list' && (
           <CharacterList

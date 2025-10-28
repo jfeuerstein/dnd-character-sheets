@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { calculateModifier } from '../utils/characterUtils';
 import ActionsManager from './ActionsManager';
+import HunterXHunterPanel from './HunterXHunterPanel';
+import { getHxHStyles } from '../utils/themeUtils';
 
 const CharacterEdit = ({ character, onSave, onCancel }) => {
   const [editChar, setEditChar] = useState({ ...character });
@@ -37,7 +39,7 @@ const CharacterEdit = ({ character, onSave, onCancel }) => {
   };
 
   return (
-    <div className="text-sm">
+    <div className="text-sm" style={getHxHStyles(editChar)}>
       <div className="mb-4 flex gap-2">
         <button
           onClick={onCancel}
@@ -199,6 +201,16 @@ const CharacterEdit = ({ character, onSave, onCancel }) => {
             isEditing={true}
           />
         </div>
+
+        {editChar.isHxH && (
+          <div>
+            <HunterXHunterPanel
+              character={editChar}
+              onUpdate={setEditChar}
+              isEditing={true}
+            />
+          </div>
+        )}
 
         <div>
           <label className="block mb-1 opacity-60 text-xs">notes</label>

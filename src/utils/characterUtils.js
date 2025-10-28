@@ -21,9 +21,10 @@ export const getModifierValue = (score) => {
 
 /**
  * Create a new blank character
+ * @param {boolean} isHxH - Whether to create a Hunter x Hunter character
  * @returns {Object} New character object
  */
-export const createBlankCharacter = () => ({
+export const createBlankCharacter = (isHxH = false) => ({
   id: Date.now(),
   name: 'new character',
   level: DEFAULTS.STARTING_LEVEL,
@@ -42,7 +43,29 @@ export const createBlankCharacter = () => ({
   actions: [],
   inventory: [],
   features: [],
-  notes: ''
+  notes: '',
+  // Hunter x Hunter specific
+  isHxH: isHxH,
+  nenType: isHxH ? '' : undefined,
+  hatsuSlots: isHxH ? {
+    1: { max: 2, current: 2 },
+    2: { max: 0, current: 0 },
+    3: { max: 0, current: 0 },
+    4: { max: 0, current: 0 },
+    5: { max: 0, current: 0 },
+    6: { max: 0, current: 0 },
+    7: { max: 0, current: 0 },
+    8: { max: 0, current: 0 },
+    9: { max: 0, current: 0 }
+  } : undefined,
+  nenTechniques: isHxH ? {
+    ten: { learned: false, notes: '' },
+    ren: { learned: false, notes: '' },
+    gyo: { learned: false, notes: '' },
+    in: { learned: false, notes: '' },
+    en: { learned: false, notes: '' },
+    hatsu: { learned: false, notes: '' }
+  } : undefined
 });
 
 /**

@@ -26,3 +26,44 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Hunter x Hunter Theme Variables */
+:root {
+  --hxh-primary: #FFFFFF;
+  --hxh-secondary: #FFFFFF;
+  --hxh-bg: #262626;
+  --hxh-bg-light: #171717;
+  --hxh-text: #FFFFFF;
+  --hxh-accent: #FFFFFF;
+}
+
+/* HxH Theme overrides - applied when character has isHxH and nenType */
+[style*="--hxh-primary"] {
+  transition: all 0.3s ease;
+}
+
+[style*="--hxh-primary"] .bg-neutral-800 {
+  background-color: var(--hxh-bg);
+}
+
+[style*="--hxh-primary"] .bg-neutral-900 {
+  background-color: var(--hxh-bg-light);
+}
+
+/* HxH accent glow effect on borders */
+[style*="--hxh-primary"] .border-white:hover {
+  border-color: var(--hxh-primary);
+  box-shadow: 0 0 8px var(--hxh-primary);
+}
+
+/* HxH button hover effect */
+[style*="--hxh-primary"] button.border-white:hover {
+  background-color: var(--hxh-primary);
+  color: var(--hxh-bg);
+  border-color: var(--hxh-primary);
+}
+
+/* Smooth transitions */
+* {
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}

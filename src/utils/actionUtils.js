@@ -16,7 +16,13 @@ export const createBlankAttack = () => ({
     die: 6,
     modifier: 0
   },
-  description: ''
+  description: '',
+  uses: {
+    enabled: false,
+    current: 0,
+    max: 0,
+    resetOn: 'long' // short, long, full
+  }
 });
 
 /**
@@ -36,7 +42,13 @@ export const createBlankSpell = () => ({
     die: 6,
     modifier: 0
   },
-  description: ''
+  description: '',
+  uses: {
+    enabled: false,
+    current: 0,
+    max: 0,
+    resetOn: 'long'
+  }
 });
 
 /**
@@ -48,7 +60,41 @@ export const createBlankFeature = () => ({
   name: '',
   type: ACTION_TYPES.FEATURE,
   category: ACTION_CATEGORIES.ACTION,
-  description: ''
+  description: '',
+  uses: {
+    enabled: false,
+    current: 0,
+    max: 0,
+    resetOn: 'long'
+  }
+});
+
+/**
+ * Create a new blank Hatsu action (Hunter x Hunter)
+ * @returns {Object} New Hatsu action object
+ */
+export const createBlankHatsu = () => ({
+  id: Date.now(),
+  name: '',
+  type: ACTION_TYPES.HATSU,
+  category: ACTION_CATEGORIES.ACTION,
+  auraCost: 0,
+  effect: '',
+  roll: {
+    enabled: false,
+    count: 1,
+    die: 6,
+    modifier: 0
+  },
+  description: '',
+  conditions: '',
+  limitations: '',
+  uses: {
+    enabled: false,
+    current: 0,
+    max: 0,
+    resetOn: 'long'
+  }
 });
 
 /**

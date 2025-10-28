@@ -1,4 +1,5 @@
 import React from 'react';
+import { NEN_TYPE_LABELS } from '../constants';
 
 const CharacterList = ({ characters, onView, onEdit, onDelete, onExport }) => {
   return (
@@ -24,6 +25,11 @@ const CharacterList = ({ characters, onView, onEdit, onDelete, onExport }) => {
                 <div className="opacity-60">
                   lvl {char.level} / {char.race || '?'} / {char.class || '?'}
                 </div>
+                {char.isHxH && char.nenType && (
+                  <div className="text-xs mt-1" style={{ color: 'var(--hxh-primary)' }}>
+                    hunter <span className="opacity-40">×</span> hunter ({NEN_TYPE_LABELS[char.nenType]})
+                  </div>
+                )}
               </div>
               <div className="flex flex-wrap gap-2">
                 <button

@@ -3,6 +3,8 @@ import { rollD20 } from '../utils/diceUtils';
 import { getModifierValue, calculateModifier } from '../utils/characterUtils';
 import { ROLL_DISPLAY_DURATION } from '../constants';
 import ActionsManager from './ActionsManager';
+import HunterXHunterPanel from './HunterXHunterPanel';
+import { getHxHStyles } from '../utils/themeUtils';
 
 const CharacterView = ({ 
   character, 
@@ -29,7 +31,7 @@ const CharacterView = ({
   };
 
   return (
-    <div className="text-sm">
+    <div className="text-sm" style={getHxHStyles(character)}>
       {rollResult && (
         <div className="mb-4 border border-white p-3 bg-neutral-900">
           <div className="flex justify-between items-center">
@@ -57,7 +59,7 @@ const CharacterView = ({
         </button>
       </div>
 
-      <div className="border border-white p-6">
+      <div className="border border-white p-6" style={{ borderColor: character.isHxH && character.nenType ? 'var(--hxh-primary)' : 'white' }}>
         <div className="mb-6">
           <pre className="text-lg mb-2">
 {`╔═══════════════════════════════╗
@@ -68,6 +70,11 @@ const CharacterView = ({
             level {character.level} {character.race} {character.class}
             {character.background && ` / ${character.background}`}
           </div>
+          {character.isHxH && character.nenType && (
+            <div className="mt-2" style={{ color: 'var(--hxh-primary)' }}>
+              hunter <span className="opacity-40">×</span> hunter
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-3 gap-4 mb-6">
@@ -139,6 +146,20 @@ const CharacterView = ({
         {character.actions && character.actions.length > 0 && (
           <div className="mb-6">
             <ActionsManager
+              character={character}
+              onUpdate={(updated) => {
+                const updatedChars = characters.map(c => c.id === updated.id ? updated : c);
+                setCharacters(updatedChars);
+                setCurrentCharacter(updated);
+              }}
+              isEditing={false}
+            />
+          </div>
+        )}
+
+        {character.isHxH && (
+          <div className="mb-6">
+            <HunterXHunterPanel
               character={character}
               onUpdate={(updated) => {
                 const updatedChars = characters.map(c => c.id === updated.id ? updated : c);

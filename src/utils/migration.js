@@ -6,19 +6,15 @@ import { ACTION_CATEGORIES, ACTION_TYPES } from '../constants';
  * @returns {Object} Character with new actions format
  */
 export const migrateSpellsToActions = (character) => {
-  // If character already has actions, don't migrate
-  if (character.actions) {
-    return character;
-  }
-
-  // Initialize actions array
-  const actions = [];
-
-  // Migrate spells if they exist
-  if (character.spells && character.spells.known) {
+  // If character already has actions, check for other migrations
+  let migrated = { ...character };
+  
+  // Migrate spells to actions if needed
+  if (!character.actions && character.spells && character.spells.known) {
+    const actions = [];
     character.spells.known.forEach(spell => {
       actions.push({
-        id: Date.now() + Math.random(), // Unique ID
+        id: Date.now() + Math.random(),
         name: spell.name || '',
         type: ACTION_TYPES.SPELL,
         category: ACTION_CATEGORIES.ACTION,
@@ -33,15 +29,31 @@ export const migrateSpellsToActions = (character) => {
         description: spell.description || ''
       });
     });
+    migrated.actions = actions;
   }
 
-  // Return migrated character
-  return {
-    ...character,
-    actions,
-    // Keep old spells data for backwards compatibility
-    spells: character.spells || { slots: {}, known: [], prepared: [] }
-  };
+  // Migrate old aura to hatsu slots for HxH characters
+  if (migrated.isHxH && migrated.aura && !migrated.hatsuSlots) {
+    migrated.hatsuSlots = {
+      1: { max: 2, current: 2 },
+      2: { max: 0, current: 0 },
+      3: { max: 0, current: 0 },
+      4: { max: 0, current: 0 },
+      5: { max: 0, current: 0 },
+      6: { max: 0, current: 0 },
+      7: { max: 0, current: 0 },
+      8: { max: 0, current: 0 },
+      9: { max: 0, current: 0 }
+    };
+    delete migrated.aura;
+  }
+
+  // Keep old spells data for backwards compatibility
+  if (!migrated.spells) {
+    migrated.spells = { slots: {}, known: [], prepared: [] };
+  }
+
+  return migrated;
 };
 
 /**
