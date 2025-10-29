@@ -84,7 +84,15 @@ export const createBlankCharacter = (isHxH = false) => ({
     acc[skill] = PROFICIENCY_LEVELS.NONE;
     return acc;
   }, {}),
-  savingThrows: {},
+  savingThrows: Object.values(ABILITIES).reduce((acc, ability) => {
+    acc[ability] = false;
+    return acc;
+  }, {}),
+  hitDice: {
+    current: DEFAULTS.STARTING_LEVEL,
+    max: DEFAULTS.STARTING_LEVEL,
+    size: 8 // d8 default, should be customized per class
+  },
   actions: [],
   inventory: [],
   features: [],
@@ -159,4 +167,131 @@ export const importCharacterFromFile = (file, onSuccess, onError) => {
     }
   };
   reader.readAsText(file);
+};
+
+/**
+ * Calculate saving throw modifier
+ * @param {Object} character - Character object
+ * @param {string} ability - Ability score key (str, dex, etc.)
+ * @returns {number} Saving throw modifier
+ */
+export const calculateSavingThrow = (character, ability) => {
+  const effectiveStats = getEffectiveStats(character);
+  const abilityMod = getModifierValue(effectiveStats[ability]);
+  const isProficient = character.savingThrows?.[ability] || false;
+  
+  return abilityMod + (isProficient ? character.proficiencyBonus : 0);
+};
+
+/**
+ * Perform a short rest
+ * @param {Object} character - Character object
+ * @param {number} hitDiceUsed - Number of hit dice to spend
+ * @returns {Object} Updated character and rest results
+ */
+export const performShortRest = (character, hitDiceUsed = 0) => {
+  const updated = { ...character };
+  const results = {
+    hpRestored: 0,
+    hitDiceSpent: 0,
+    actionsRestored: [],
+    hatsuSlotsRestored: []
+  };
+
+  // Initialize hit dice if not present
+  if (!updated.hitDice) {
+    updated.hitDice = {
+      current: updated.level,
+      max: updated.level,
+      size: 8 // default d8, should be based on class
+    };
+  }
+
+  // Spend hit dice to restore HP
+  if (hitDiceUsed > 0 && updated.hitDice.current >= hitDiceUsed) {
+    const conMod = getModifierValue(updated.stats.con);
+    for (let i = 0; i < hitDiceUsed; i++) {
+      // Roll hit die + CON modifier (minimum 1)
+      const roll = Math.floor(Math.random() * updated.hitDice.size) + 1;
+      const healing = Math.max(1, roll + conMod);
+      updated.hp.current = Math.min(updated.hp.max, updated.hp.current + healing);
+      results.hpRestored += healing;
+      updated.hitDice.current -= 1;
+      results.hitDiceSpent += 1;
+    }
+  }
+
+  // Restore actions with "short" rest reset
+  if (updated.actions) {
+    updated.actions = updated.actions.map(action => {
+      if (action.uses?.enabled && action.uses.resetOn === 'short') {
+        results.actionsRestored.push(action.name);
+        return { ...action, uses: { ...action.uses, current: action.uses.max } };
+      }
+      return action;
+    });
+  }
+
+  return { character: updated, results };
+};
+
+/**
+ * Perform a long rest
+ * @param {Object} character - Character object
+ * @returns {Object} Updated character and rest results
+ */
+export const performLongRest = (character) => {
+  const updated = { ...character };
+  const results = {
+    hpRestored: 0,
+    hitDiceRestored: 0,
+    actionsRestored: [],
+    hatsuSlotsRestored: []
+  };
+
+  // Restore HP to max
+  const hpHealed = updated.hp.max - updated.hp.current;
+  updated.hp.current = updated.hp.max;
+  results.hpRestored = hpHealed;
+
+  // Initialize hit dice if not present
+  if (!updated.hitDice) {
+    updated.hitDice = {
+      current: updated.level,
+      max: updated.level,
+      size: 8
+    };
+  }
+
+  // Restore hit dice (at least 1, up to half of max)
+  const hitDiceToRestore = Math.max(1, Math.floor(updated.hitDice.max / 2));
+  const restored = Math.min(hitDiceToRestore, updated.hitDice.max - updated.hitDice.current);
+  updated.hitDice.current += restored;
+  results.hitDiceRestored = restored;
+
+  // Restore actions with "short" or "long" rest reset
+  if (updated.actions) {
+    updated.actions = updated.actions.map(action => {
+      if (action.uses?.enabled && (action.uses.resetOn === 'short' || action.uses.resetOn === 'long')) {
+        results.actionsRestored.push(action.name);
+        return { ...action, uses: { ...action.uses, current: action.uses.max } };
+      }
+      return action;
+    });
+  }
+
+  // Restore Hatsu slots for HxH characters
+  if (updated.isHxH && updated.hatsuSlots) {
+    Object.keys(updated.hatsuSlots).forEach(level => {
+      if (updated.hatsuSlots[level].max > 0) {
+        const restored = updated.hatsuSlots[level].max - updated.hatsuSlots[level].current;
+        if (restored > 0) {
+          updated.hatsuSlots[level].current = updated.hatsuSlots[level].max;
+          results.hatsuSlotsRestored.push(`Level ${level}`);
+        }
+      }
+    });
+  }
+
+  return { character: updated, results };
 };

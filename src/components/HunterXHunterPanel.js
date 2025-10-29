@@ -208,12 +208,6 @@ const HunterXHunterPanel = ({ character, onUpdate, isEditing = false }) => {
                 </div>
               </div>
             ))}
-            <button
-              onClick={longRest}
-              className="w-full px-4 py-2 border border-white hover:bg-white hover:text-neutral-800 transition-colors text-sm"
-            >
-              long rest (restore all slots)
-            </button>
           </div>
         </div>
       )}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRollHistory } from '../contexts/RollHistoryContext';
 import { 
   SKILLS, 
   SKILL_NAMES, 
@@ -12,6 +13,7 @@ import { ROLL_DISPLAY_DURATION } from '../constants';
 
 const SkillsPanel = ({ character, onUpdate, isEditing = false }) => {
   const [rollResult, setRollResult] = useState(null);
+  const { addRoll } = useRollHistory();
 
   const handleSkillRoll = (skill) => {
     const modifier = calculateSkillModifier(character, skill);
@@ -20,6 +22,16 @@ const SkillsPanel = ({ character, onUpdate, isEditing = false }) => {
     setRollResult({
       skill: SKILL_NAMES[skill],
       ...result
+    });
+    
+    // Add to roll history
+    addRoll({
+      type: 'ability_check',
+      label: `${SKILL_NAMES[skill]} Check`,
+      characterName: character.name,
+      d20: result.d20,
+      modifier: result.modifier,
+      total: result.total
     });
     
     setTimeout(() => setRollResult(null), ROLL_DISPLAY_DURATION);

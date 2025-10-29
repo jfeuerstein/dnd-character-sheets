@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRollHistory } from '../contexts/RollHistoryContext';
 import { 
   ACTION_CATEGORIES, 
   ACTION_TYPES, 
@@ -19,6 +20,7 @@ import { rollAttack, rollSpell } from '../utils/diceUtils';
 const ActionsManager = ({ character, onUpdate, isEditing = false }) => {
   const [expandedAction, setExpandedAction] = useState(null);
   const [rollResult, setRollResult] = useState(null);
+  const { addRoll } = useRollHistory();
 
   const actions = character.actions || [];
 
@@ -65,6 +67,26 @@ const ActionsManager = ({ character, onUpdate, isEditing = false }) => {
       ...result
     });
     
+    // Add attack roll to history
+    addRoll({
+      type: 'attack',
+      label: `${attack.name} (Attack)`,
+      characterName: character.name,
+      d20: result.hit.d20,
+      modifier: result.hit.modifier,
+      total: result.hit.total
+    });
+    
+    // Add damage roll to history
+    addRoll({
+      type: 'damage',
+      label: `${attack.name} (Damage)`,
+      characterName: character.name,
+      rolls: result.damage.rolls,
+      notation: result.damage.notation,
+      total: result.damage.total
+    });
+    
     setTimeout(() => setRollResult(null), 3000);
   };
 
@@ -77,6 +99,17 @@ const ActionsManager = ({ character, onUpdate, isEditing = false }) => {
         name: spell.name,
         ...result
       });
+      
+      // Add spell roll to history
+      addRoll({
+        type: 'spell',
+        label: spell.name,
+        characterName: character.name,
+        rolls: result.rolls,
+        notation: result.notation,
+        total: result.total
+      });
+      
       setTimeout(() => setRollResult(null), 3000);
     }
   };

@@ -8,19 +8,27 @@ import { migrateAllCharacters } from '../utils/migration';
  */
 export const useCharacters = () => {
   const [characters, setCharacters] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Load characters on mount
   useEffect(() => {
-    const loaded = loadCharacters();
-    // Migrate old spell format to new actions format
-    const migrated = migrateAllCharacters(loaded);
-    setCharacters(migrated);
+    const loadInitialCharacters = () => {
+      const loaded = loadCharacters();
+      console.log('Initial load complete:', loaded?.length);
+      setCharacters(loaded || []);
+      setIsLoading(false);
+    };
+
+    loadInitialCharacters();
   }, []);
 
   // Save characters whenever they change
   useEffect(() => {
-    saveCharacters(characters);
-  }, [characters]);
+    if (!isLoading) {
+      console.log('Saving characters:', characters?.length);
+      saveCharacters(characters);
+    }
+  }, [characters, isLoading]);
 
   /**
    * Add a new character

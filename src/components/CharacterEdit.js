@@ -4,7 +4,7 @@ import ActionsManager from './ActionsManager';
 import HunterXHunterPanel from './HunterXHunterPanel';
 import SkillsPanel from './SkillsPanel';
 import { getHxHStyles } from '../utils/themeUtils';
-import { ABILITIES } from '../constants';
+import { ABILITIES, ABILITY_NAMES } from '../constants';
 
 const CharacterEdit = ({ character, onSave, onCancel }) => {
   const [editChar, setEditChar] = useState({ ...character });
@@ -52,6 +52,16 @@ const CharacterEdit = ({ character, onSave, onCancel }) => {
     setEditChar({
       ...editChar,
       features: editChar.features.filter((_, i) => i !== idx)
+    });
+  };
+
+  const toggleSavingThrow = (ability) => {
+    setEditChar({
+      ...editChar,
+      savingThrows: {
+        ...editChar.savingThrows,
+        [ability]: !editChar.savingThrows?.[ability]
+      }
     });
   };
 
@@ -177,6 +187,79 @@ const CharacterEdit = ({ character, onSave, onCancel }) => {
             onUpdate={setEditChar}
             isEditing={true}
           />
+        </div>
+
+        <div>
+          <div className="mb-2 opacity-60 text-xs">╔═ saving throw proficiencies</div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+            {Object.entries(ABILITIES).map(([key, ability]) => {
+              const isProficient = editChar.savingThrows?.[ability] || false;
+              return (
+                <button
+                  key={ability}
+                  onClick={() => toggleSavingThrow(ability)}
+                  className="border border-white p-2 text-center hover:bg-white hover:text-neutral-800 transition-colors"
+                >
+                  <div className="flex items-center justify-center gap-1 text-xs">
+                    <span>{isProficient ? '●' : '○'}</span>
+                    <span>{ABILITY_NAMES[ability]}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          <div className="text-xs opacity-60 mt-1">
+            click to toggle proficiency
+          </div>
+        </div>
+
+        <div>
+          <div className="mb-2 opacity-60 text-xs">╔═ hit dice</div>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block mb-1 opacity-60 text-xs">current</label>
+              <input
+                type="number"
+                value={editChar.hitDice?.current || editChar.level}
+                onChange={(e) => updateField('hitDice', { 
+                  ...editChar.hitDice, 
+                  current: parseInt(e.target.value) || 0 
+                })}
+                className="w-full bg-neutral-900 border border-white px-3 py-2 text-white font-mono"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 opacity-60 text-xs">maximum</label>
+              <input
+                type="number"
+                value={editChar.hitDice?.max || editChar.level}
+                onChange={(e) => updateField('hitDice', { 
+                  ...editChar.hitDice, 
+                  max: parseInt(e.target.value) || editChar.level 
+                })}
+                className="w-full bg-neutral-900 border border-white px-3 py-2 text-white font-mono"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 opacity-60 text-xs">die size</label>
+              <select
+                value={editChar.hitDice?.size || 8}
+                onChange={(e) => updateField('hitDice', { 
+                  ...editChar.hitDice, 
+                  size: parseInt(e.target.value) 
+                })}
+                className="w-full bg-neutral-900 border border-white px-3 py-2 text-white font-mono"
+              >
+                <option value="6">d6</option>
+                <option value="8">d8</option>
+                <option value="10">d10</option>
+                <option value="12">d12</option>
+              </select>
+            </div>
+          </div>
+          <div className="text-xs opacity-60 mt-1">
+            typical: d6 (wizard), d8 (rogue), d10 (fighter), d12 (barbarian)
+          </div>
         </div>
 
         <div>

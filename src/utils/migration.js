@@ -1,4 +1,4 @@
-import { ACTION_CATEGORIES, ACTION_TYPES, SKILLS, PROFICIENCY_LEVELS } from '../constants';
+import { ACTION_CATEGORIES, ACTION_TYPES, SKILLS, PROFICIENCY_LEVELS, ABILITIES } from '../constants';
 
 /**
  * Migrate old spell format to new actions format
@@ -64,6 +64,31 @@ export const migrateSpellsToActions = (character) => {
   // Remove old nenTechniques if it exists (replaced by automatic progression)
   if (migrated.isHxH && migrated.nenTechniques) {
     delete migrated.nenTechniques;
+  }
+
+  // Initialize saving throws for old characters
+  if (!migrated.savingThrows || typeof migrated.savingThrows !== 'object') {
+    migrated.savingThrows = Object.values(ABILITIES).reduce((acc, ability) => {
+      acc[ability] = false;
+      return acc;
+    }, {});
+  }
+
+  // Initialize hit dice for old characters
+  if (!migrated.hitDice) {
+    migrated.hitDice = {
+      current: migrated.level || 1,
+      max: migrated.level || 1,
+      size: 8 // default d8
+    };
+  }
+
+  // Ensure features have abilityModifiers field
+  if (migrated.features) {
+    migrated.features = migrated.features.map(feature => ({
+      ...feature,
+      abilityModifiers: feature.abilityModifiers || {}
+    }));
   }
 
   return migrated;

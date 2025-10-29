@@ -4,6 +4,8 @@ import Header from './components/Header';
 import CharacterList from './components/CharacterList';
 import CharacterView from './components/CharacterView';
 import CharacterEdit from './components/CharacterEdit';
+import DiceRollSidebar from './components/DiceRollSidebar';
+import { RollHistoryProvider } from './contexts/RollHistoryContext';
 import { useCharacters } from './hooks/useCharacters';
 import { 
   createBlankCharacter, 
@@ -12,7 +14,7 @@ import {
   importCharacterFromFile 
 } from './utils/characterUtils';
 
-function App() {
+function AppContent() {
   const { characters, setCharacters, addCharacter, updateCharacter, deleteCharacter } = useCharacters();
   const [currentCharacter, setCurrentCharacter] = useState(null);
   const [view, setView] = useState('list'); // list, view, edit
@@ -83,15 +85,28 @@ function App() {
     }
   };
 
+  // Add debug logging
+  console.log('App rendering with characters:', characters?.length);
+
   return (
     <div className="min-h-screen bg-neutral-800 text-white font-mono p-4">
       <div className="max-w-4xl mx-auto">
         <Header
           onViewList={() => setView('list')}
           onCreateNew={handleCreateNew}
-          onExportAll={() => exportAllData(characters)}
+          onExportAll={() => characters?.length > 0 ? exportAllData(characters) : null}
           onImport={handleImport}
         />
+
+        {view === 'list' && Array.isArray(characters) && (
+          <CharacterList
+            characters={characters}
+            onView={handleView}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onExport={exportCharacterToFile}
+          />
+        )}
 
         {showHxHModal && (
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
@@ -123,16 +138,6 @@ function App() {
           </div>
         )}
 
-        {view === 'list' && (
-          <CharacterList
-            characters={characters}
-            onView={handleView}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onExport={exportCharacterToFile}
-          />
-        )}
-
         {view === 'view' && currentCharacter && (
           <CharacterView
             character={currentCharacter}
@@ -152,7 +157,18 @@ function App() {
           />
         )}
       </div>
+      
+      {/* Dice Roll Sidebar */}
+      <DiceRollSidebar />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <RollHistoryProvider>
+      <AppContent />
+    </RollHistoryProvider>
   );
 }
 
